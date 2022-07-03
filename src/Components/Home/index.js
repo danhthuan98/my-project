@@ -2,6 +2,7 @@ import React, { useReducer, useState } from 'react';
 import todoReducer from '../../reducers/todoReducer';
 import useUser from '../../hooks/useUser';
 import './style.css';
+import { Link } from 'react-router-dom';
 
 /**
 * @author
@@ -11,7 +12,7 @@ import './style.css';
 
 const Home = () => {
 
-    const { data, setData } = useUser();
+    const { data, setData, name, setName } = useUser();
     const [todos, dispatchTodos] = useReducer(todoReducer, data);
     const [task, setTask] = useState('');
     const [filter, setFilter] = useState('ALL');
@@ -30,6 +31,7 @@ const Home = () => {
                 type: 'ADD_TODO',
                 task
             });
+            setData([...todos])
         }
         setTask('');
     }
@@ -64,6 +66,10 @@ const Home = () => {
                 </button>
             </div>
             <div className='flex'>
+                {name}
+                <input onChange={(e) => setName(e.target.value)} />
+            </div>
+            <div className='flex'>
                 <ul>
                     {filteredTodos.map(todo => (
                         <li key={todo.id}>
@@ -84,6 +90,9 @@ const Home = () => {
                     <input type="text" onChange={(e) => setTask(e.target.value)} value={task} />
                     <button type="submit" style={{ marginLeft: 5 }}>Add Todo</button>
                 </form>
+            </div>
+            <div className='flex'>
+                <Link to='/test'>Go to Test Page</Link>
             </div>
         </>
     )
