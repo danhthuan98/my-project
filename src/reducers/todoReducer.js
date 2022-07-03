@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const todoReducer = (state, action) => {
-    console.log(state)
     switch (action.type) {
         case "DO_TODO":
             return state.map(todo => {
