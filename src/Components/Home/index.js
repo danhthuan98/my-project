@@ -1,8 +1,9 @@
-import React, { useReducer, useState } from 'react';
-import todoReducer from '../../reducers/todoReducer';
+import React, { useState } from 'react';
 import useUser from '../../hooks/useUser';
 import './style.css';
 import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+
 
 /**
 * @author
@@ -12,31 +13,31 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
 
-    const { data, setData, name, setName } = useUser();
-    const [todos, dispatchTodos] = useReducer(todoReducer, data);
+    const { data, setData } = useUser();
     const [task, setTask] = useState('');
     const [filter, setFilter] = useState('ALL');
-
-    const handleChangeCheckbox = todo => {
-        dispatchTodos({
-            type: todo.complete ? 'UNDO_TODO' : 'DO_TODO',
-            id: todo.id
-        });
-    }
 
     const handleSubmit = e => {
         e.preventDefault();
         if (task) {
-            dispatchTodos({
-                type: 'ADD_TODO',
-                task
-            });
-            setData([...todos])
+            let element = { id: uuidv4(), task, complete: false };
+            setData([...data, element]);
+            setTask('');
         }
-        setTask('');
     }
 
-    const filteredTodos = todos.filter(todo => {
+    const handleChangeCheckbox = todo => {
+        const newArr = data.map((item) => {
+            if (todo.id === item.id) {
+                return { ...item, complete: !item.complete }
+            } else {
+                return item;
+            }
+        })
+        setData(newArr);
+    }
+
+    const filteredTodos = data.filter(todo => {
         if (filter === 'ALL') {
             return true;
         }
@@ -61,29 +62,26 @@ const Home = () => {
                 <button type="button" onClick={() => setFilter('INCOMPLETE')} className={filter !== 'INCOMPLETE' ? 'button' : 'button-active'}>
                     Show Incomplete
                 </button>
-                <button type="button" onClick={() => setData([])} className='button'>
-                    refresh list
-                </button>
             </div>
             <div className='flex'>
-                {name}
-                <input onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className='flex'>
-                <ul>
-                    {filteredTodos.map(todo => (
-                        <li key={todo.id}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={todo.complete}
-                                    onChange={() => handleChangeCheckbox(todo)}
-                                />
-                                {todo.task}
-                            </label>
-                        </li>
-                    ))}
-                </ul>
+                {
+                    filteredTodos.length > 0 ?
+                        <ul>
+                            {filteredTodos.map(todo => (
+                                <li key={todo.id}>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={todo.complete}
+                                            onChange={() => handleChangeCheckbox(todo)}
+                                        />
+                                        {todo.task}
+                                    </label>
+                                </li>
+                            ))}
+                        </ul> : <p> No Task</p>
+                }
+
             </div>
             <div className='flex'>
                 <form onSubmit={handleSubmit}>
