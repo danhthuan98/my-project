@@ -9,13 +9,9 @@ import { Link } from 'react-router-dom';
 
 const Test = () => {
 
-    const { data, name, setName } = useUser();
+    const { data } = useUser();
     return (
         <>
-            <div className='flex'>
-                {name}
-                <input onChange={(e) => setName(e.target.value)} />
-            </div>
             <div className='flex'>
                 <ul>
                     {data.map(todo => (
