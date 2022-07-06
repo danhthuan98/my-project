@@ -27,14 +27,10 @@ const Home = () => {
     }
 
     const handleChangeCheckbox = todo => {
-        const newArr = data.map((item) => {
-            if (todo.id === item.id) {
-                return { ...item, complete: !item.complete }
-            } else {
-                return item;
-            }
-        })
-        setData(newArr);
+        setData(prev => (
+            prev.map((item) =>
+                item.id === todo.id ? { ...item, complete: !item.complete } : item)
+        ))
     }
 
     const filteredTodos = data.filter(todo => {
@@ -94,6 +90,7 @@ const Home = () => {
             </div>
         </>
     )
+
 
 }
 
